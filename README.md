@@ -23,7 +23,7 @@ end architecture rtl;
 ```
 
 ### Results:
-![LED blinker with button control](figures/led_blink.gif);
+![LED blinker with button control](figures/led_blink.gif)
 
 ## LED blinker with the clock
 
@@ -65,10 +65,10 @@ end architecture rtl;
 Our expected design:
 ![Diagram](figures/schema_led_blink2.jpg)
 Synthesis Report:
-![Synthesis Report](figures/rtl2.PNG);
+![Synthesis Report](figures/rtl2.PNG)
 
 ### Results:
-![LED blinker with button control](figures/led_blink2.gif);
+![LED blinker with button control](figures/led_blink2.gif)
   
 Le _n dans i_rst_n fait allusion au fait que le reset est effectif à l'état bas. En effet, on a un reset quand on a un '0', donc on nomme avec un _n pour négatif.
 
@@ -125,11 +125,41 @@ begin
 end architecture rtl;
 ```
 ### Results:
-![Chenillard](figures/led_blink3.gif);
+![Chenillard](figures/led_blink3.gif)
 ## TELECRAN Board Constraints
 
-J2 corresponds to GPIO0
-J1 corresponds to GPIO1
+Analyse of the edge detection:
+![Edge detection](figures/edge_detector.png);
+When there is a rising edge on the input signal, the first flip-flop output goes high while the second remains low. On the next clock cycle, the second flip-flop output goes high, thus generating a one-clock-cycle differential signal that we can detect checking that the first Q is 1 and second is 0.  
+
+We implement the edge detector as follows:
+```vhdl
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity edge_detector is
+    port (
+        i_clk   : in std_logic;
+        i_signal: in std_logic;
+        o_rising_edge : out std_logic
+    );
+end entity edge_detector;
+
+architecture rtl of edge_detector is
+    signal r_ff1 : std_logic := '0';
+    signal r_ff2 : std_logic := '0';
+begin
+    process(i_clk)
+    begin
+        if rising_edge(i_clk) then
+            r_ff1 <= i_signal;
+            r_ff2 <= r_ff1;
+            o_rising_edge <= r_ff1 xor r_ff2;
+        end if;
+    end process;
+end architecture rtl;
+```
+
 
 ### LEDs
 | Name  | GPIO  | FPGA |
