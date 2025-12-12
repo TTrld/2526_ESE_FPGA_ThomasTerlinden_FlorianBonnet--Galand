@@ -109,4 +109,5 @@ Synthesis Report:
 
 Results:
 ![LED blinker with button control](figures/led_blink2.gif);
-
+  
+Le _n dans i_rst_n fait allusion au fait que le reset est effectif à l'état bas. En effet, on a un reset quand on a un '0', donc on nomme avec un _n pour négatif.
