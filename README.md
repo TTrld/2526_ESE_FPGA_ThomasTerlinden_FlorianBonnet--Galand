@@ -160,6 +160,10 @@ begin
 end architecture rtl;
 ```
 
+On écrit le testbench et on simule sur ModelSim.
+![Edge detection Simulation](figures/edge_detector_simulation.png);
+
+
 
 ### LEDs
 | Name  | GPIO  | FPGA |
