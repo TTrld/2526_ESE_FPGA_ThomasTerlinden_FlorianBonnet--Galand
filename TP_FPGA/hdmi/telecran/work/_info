@@ -1,0 +1,93 @@
+m255
+K4
+z2
+!s11e vcom 2020.1 2020.02, Feb 28 2020
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/Florian/Documents/ENSEA/3eme annee/ESE/TP_FPGA/2526_ESE_FPGA_ThomasTerlinden_FlorianBonnet--Galand/TP_FPGA/hdmi/telecran
+Eedge_detector
+Z1 w1765959106
+Z2 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z3 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
+!i122 2
+R0
+Z4 8edge_detector.vhd
+Z5 Fedge_detector.vhd
+l0
+L4 1
+V6@KSzkCFFdCcSndzngKzb2
+!s100 gFbQoAjnMgH>OA`1C8iMV2
+Z6 OV;C;2020.1;71
+33
+Z7 !s110 1765959126
+!i10b 1
+Z8 !s108 1765959125.000000
+Z9 !s90 -reportprogress|300|-2008|edge_detector.vhd|
+Z10 !s107 edge_detector.vhd|
+!i113 1
+Z11 o-2008
+Z12 tExplicit 1 CvgOpt 0
+Artl
+R2
+R3
+DEx4 work 13 edge_detector 0 22 6@KSzkCFFdCcSndzngKzb2
+!i122 2
+l15
+L12 13
+VoY=Wh_4ife34IVTQN2VW_0
+!s100 0oA0cSn=mD3kan8UJfA0l3
+R6
+33
+R7
+!i10b 1
+R8
+R9
+R10
+!i113 1
+R11
+R12
+Etb_edge_detector
+Z13 w1765958432
+R2
+R3
+!i122 3
+R0
+Z14 8tb_edge_detector.vhd
+Z15 Ftb_edge_detector.vhd
+l0
+L4 1
+VMVjg[;cJXzigU>SnhOGIa3
+!s100 `OS^CQ^IdhN7d6W^kQ[zF3
+R6
+33
+R7
+!i10b 1
+Z16 !s108 1765959126.000000
+Z17 !s90 -reportprogress|300|-2008|tb_edge_detector.vhd|
+Z18 !s107 tb_edge_detector.vhd|
+!i113 1
+R11
+R12
+Abehavior
+R2
+R3
+Z19 DEx4 work 16 tb_edge_detector 0 22 MVjg[;cJXzigU>SnhOGIa3
+!i122 3
+l27
+Z20 L8 72
+Z21 VR@2ngd=:1d4:076IzCjLb2
+Z22 !s100 1CVM4g8>1gW@;V_VPc5Fj0
+R6
+33
+R7
+!i10b 1
+R16
+R17
+R18
+!i113 1
+R11
+R12

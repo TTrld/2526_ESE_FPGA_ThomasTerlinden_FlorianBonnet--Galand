@@ -18,7 +18,7 @@ begin
         if rising_edge(i_clk) then
             r_ff1 <= i_signal;
             r_ff2 <= r_ff1;
-				o_rising_edge <= r_ff1 xor r_ff2;
         end if;
     end process;
+    o_rising_edge <= r_ff1 xor r_ff2;
 end architecture rtl;
