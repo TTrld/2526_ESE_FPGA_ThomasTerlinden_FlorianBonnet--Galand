@@ -1,35 +1,37 @@
-# 1. Quitter la simulation précédente s'il y en a une en cours
+# 1. Nettoyage
 quit -sim
-
-# 2. Créer la bibliothèque de travail "work" si elle n'existe pas
 if {[file exists work] == 0} {
     vlib work
 }
 
-# 3. Compiler les fichiers VHDL
-# L'ordre est important : d'abord les composants, ensuite le testbench qui les utilise
-# -2008 force l'utilisation du standard VHDL 2008 (optionnel mais conseillé)
-vcom -2008 edge_detector.vhd
-vcom -2008 tb_edge_detector.vhd
+# 2. Compilation (Ordre : Code source, puis Testbench)
+vcom -2008 gestion_encodeur.vhd
+vcom -2008 tb_gestion_encodeur.vhd
 
-# 4. Charger la simulation
-# On charge l'entité du Testbench (tb_edge_detector) située dans la librairie 'work'
-vsim work.tb_edge_detector
+# 3. Chargement de la simulation
+vsim work.tb_gestion_encodeur
 
-# 5. Ajouter les signaux à la fenêtre Wave
-# On ajoute tous les signaux (*) du testbench
-add wave -position insertpoint sim:/tb_edge_detector/*
-
-# Astuce : On peut aussi ajouter les signaux internes du composant testé (uut)
-# add wave -position insertpoint sim:/tb_edge_detector/uut/*
-
-# 6. Configuration de l'affichage (facultatif)
-# signalnamewidth 1 permet d'afficher "clk" au lieu de "tb_edge_detector/clk"
+# 4. Configuration de l'affichage des vagues
+# On enlève les chemins longs (tb/uut/...)
 config wave -signalnamewidth 1
 
-# 7. Lancer la simulation
-# On lance pour une durée définie (ex: 200 nanosecondes) ou "run -all"
-run 200 ns
+# Ajout des signaux globaux
+add wave -noupdate -divider "Entrees"
+add wave -noupdate -color "yellow" /tb_gestion_encodeur/r_clk
+add wave -noupdate -color "red"    /tb_gestion_encodeur/r_rst_n
 
-# 8. Zoomer pour tout voir
+add wave -noupdate -divider "Encodeur"
+add wave -noupdate -color "cyan"   /tb_gestion_encodeur/r_a
+add wave -noupdate -color "cyan"   /tb_gestion_encodeur/r_b
+
+add wave -noupdate -divider "Sortie & Interne"
+# On affiche la LED en binaire
+add wave -noupdate -format literal -radix binary /tb_gestion_encodeur/w_led
+
+# ASTUCE : On va chercher le compteur interne du composant (uut) 
+# et on l'affiche en DECIMAL (unsigned) pour voir 0, 1, 2, 3...
+add wave -noupdate -format literal -radix unsigned /tb_gestion_encodeur/uut/r_counter
+
+# 5. Lancer la simulation
+run 1500 ns
 wave zoom full
