@@ -154,13 +154,16 @@ begin
         if rising_edge(i_clk) then
             r_ff1 <= i_signal;
             r_ff2 <= r_ff1;
-            o_rising_edge <= r_ff1 xor r_ff2;
         end if;
     end process;
+    o_rising_edge <= r_ff1 xor r_ff2;
 end architecture rtl;
 ```
 
-On écrit le testbench et on simule sur ModelSim.
+Here is the RTL of the edge detector.
+![Edge detection RTL](figures/rtl_edge_detector.png);
+
+We wrote the testbench file before the simulation on ModelSim.
 ![Edge detection Simulation](figures/edge_detector_simulation.png);
 
 
