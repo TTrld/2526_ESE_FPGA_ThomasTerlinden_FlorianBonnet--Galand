@@ -9,85 +9,89 @@ z2
 !i10f 100
 cModel Technology
 Z0 dC:/Users/Florian/Documents/ENSEA/3eme annee/ESE/TP_FPGA/2526_ESE_FPGA_ThomasTerlinden_FlorianBonnet--Galand/TP_FPGA/hdmi/telecran
-Eedge_detector
-Z1 w1765959106
-Z2 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
-Z3 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
-!i122 2
+Ehdmi_controler
+Z1 w1766137426
+Z2 DPx4 ieee 11 numeric_std 0 22 aU^R8eGcicLcUFIaBQSL>3
+Z3 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z4 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
+!i122 0
 R0
-Z4 8edge_detector.vhd
-Z5 Fedge_detector.vhd
+Z5 8hdmi_controler.vhd
+Z6 Fhdmi_controler.vhd
 l0
-L4 1
-V6@KSzkCFFdCcSndzngKzb2
-!s100 gFbQoAjnMgH>OA`1C8iMV2
-Z6 OV;C;2020.1;71
+L5 1
+Vl:D@Ck0iCo9[fNgfWAdc92
+!s100 NAe2FHM:;QLmh10kXog^c2
+Z7 OV;C;2020.1;71
 33
-Z7 !s110 1765959126
+Z8 !s110 1766137465
 !i10b 1
-Z8 !s108 1765959125.000000
-Z9 !s90 -reportprogress|300|-2008|edge_detector.vhd|
-Z10 !s107 edge_detector.vhd|
+Z9 !s108 1766137465.000000
+Z10 !s90 -reportprogress|300|-2008|-work|work|hdmi_controler.vhd|
+Z11 !s107 hdmi_controler.vhd|
 !i113 1
-Z11 o-2008
-Z12 tExplicit 1 CvgOpt 0
+Z12 o-2008 -work work
+Z13 tExplicit 1 CvgOpt 0
 Artl
 R2
 R3
-DEx4 work 13 edge_detector 0 22 6@KSzkCFFdCcSndzngKzb2
-!i122 2
-l15
-L12 13
-VoY=Wh_4ife34IVTQN2VW_0
-!s100 0oA0cSn=mD3kan8UJfA0l3
-R6
-33
+R4
+DEx4 work 14 hdmi_controler 0 22 l:D@Ck0iCo9[fNgfWAdc92
+!i122 0
+l49
+L29 146
+V>T^JihFdoj:M4ZF:l2:V10
+!s100 Tz[NAn545=lYLLId`:YQZ2
 R7
-!i10b 1
+33
 R8
+!i10b 1
 R9
 R10
-!i113 1
 R11
+!i113 1
 R12
-Etb_edge_detector
-Z13 w1765958432
+R13
+Etb_hdmi_controler
+Z14 w1766131588
 R2
 R3
-!i122 3
+R4
+!i122 1
 R0
-Z14 8tb_edge_detector.vhd
-Z15 Ftb_edge_detector.vhd
+Z15 8tb_hdmi_controler.vhd
+Z16 Ftb_hdmi_controler.vhd
 l0
-L4 1
-VMVjg[;cJXzigU>SnhOGIa3
-!s100 `OS^CQ^IdhN7d6W^kQ[zF3
-R6
-33
+L5 1
+VB;X]HV?LB9<_HLlcb?<g@3
+!s100 CMWNZOR7lzPLf>OA1j6Dh0
 R7
+33
+Z17 !s110 1766137466
 !i10b 1
-Z16 !s108 1765959126.000000
-Z17 !s90 -reportprogress|300|-2008|tb_edge_detector.vhd|
-Z18 !s107 tb_edge_detector.vhd|
+R9
+Z18 !s90 -reportprogress|300|-2008|-work|work|tb_hdmi_controler.vhd|
+!s107 tb_hdmi_controler.vhd|
 !i113 1
-R11
 R12
-Abehavior
+R13
+Abehavioral
 R2
 R3
-Z19 DEx4 work 16 tb_edge_detector 0 22 MVjg[;cJXzigU>SnhOGIa3
-!i122 3
-l27
-Z20 L8 72
-Z21 VR@2ngd=:1d4:076IzCjLb2
-Z22 !s100 1CVM4g8>1gW@;V_VPc5Fj0
-R6
-33
+R4
+DEx4 work 17 tb_hdmi_controler 0 22 B;X]HV?LB9<_HLlcb?<g@3
+!i122 1
+l49
+L8 90
+Vz<^YASga;bl[?4:4QOCEd2
+!s100 =HPABRN0lB@a28`<MiXDB0
 R7
-!i10b 1
-R16
+33
 R17
+!i10b 1
+R9
 R18
+Z19 !s107 tb_hdmi_controler.vhd|
 !i113 1
-R11
 R12
+R13
