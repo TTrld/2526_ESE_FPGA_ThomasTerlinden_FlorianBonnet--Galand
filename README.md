@@ -176,6 +176,7 @@ We wrote the testbench file before the simulation on ModelSim.
 
 Une RAM Dual-Port est une RAM avec deux accès indépendants. Un pour **l'écriture**, piloté par les compteur des encodeurs, côté utilisateur, et un autre pour la **lecture**, piloté par le contrôleur de l'HDMI.
 
+![lines&reset](figures/pixel_bouton.gif);
 
 ### LEDs
 | Name  | GPIO  | FPGA |
