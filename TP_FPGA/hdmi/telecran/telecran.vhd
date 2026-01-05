@@ -70,8 +70,14 @@ architecture rtl of telecran is
     signal s_de     : std_logic; -- Data Enable interne
 
 	 -- Signaux Position Curseur (sorties des instances encodeurs)
-    signal s_pos_x  : integer range 0 to H_RES-1;
-    signal s_pos_y  : integer range 0 to V_RES-1;
+    signal s_pos_x  : integer range 0 to h_res-1;
+    signal s_pos_y  : integer range 0 to v_res-1;
+
+    signal s_pixel_data : std_logic_vector(23 downto 0);
+
+    signal s_we_a : std_logic;
+    signal s_data_a : std_logic_vector(23 downto 0);
+    signal s_addr_a : natural range 0 to h_res*v_res-1;
 
 begin
     o_leds <= (others => '0');
@@ -161,37 +167,51 @@ begin
 
         if s_de = '1' then
             -- Zone curseur (taille 16x16)
-            if (v_scan_x_int >= s_pos_x and v_scan_x_int < s_pos_x + 16) and
-               (v_scan_y_int >= s_pos_y and v_scan_y_int < s_pos_y + 16) then
+            if (v_scan_x_int >= s_pos_x and v_scan_x_int < s_pos_x + 4) and
+               (v_scan_y_int >= s_pos_y and v_scan_y_int < s_pos_y + 4) then
                 o_hdmi_tx_d <= x"FFFFFF"; -- Blanc
             else
-                o_hdmi_tx_d <= x"0000FF"; -- Bleu Foncé 
+                o_hdmi_tx_d <= s_pixel_data;  
             end if;
         else
             o_hdmi_tx_d <= (others => '0');
         end if;
     end process;
 	 
---	 --DPRAM
---    inst_PORT_AB : entity work.dpram
---    generic map
---    (
---        mem_size    =>
---        data_width  =>
---    );
---   port map
---   (   
---        i_clk_a =>      
---        i_clk_b =>      
---
---        i_data_a =>   
---        i_data_b =>   
---        i_addr_a  =>  
---        i_addr_b =>   
---        i_we_a  =>    
---        i_we_b  =>   
---        o_q_a =>      
---        o_q_b  =>   
---   );
---	 
+    -- Processus d'écriture dans la DPRAM via le port A
+    process(i_left_pb, s_pos_x, s_pos_y)
+    begin
+        if i_left_pb = '0' then  -- Bouton gauche pressé (supposé actif bas)
+            s_we_a <= '1';
+            s_data_a <= x"FFFFFF";  -- Blanc
+            s_addr_a <= s_pos_y * h_res + s_pos_x;
+        else
+            s_we_a <= '0';
+            s_data_a <= (others => '0');
+            s_addr_a <= 0;
+        end if;
+    end process;
+	 
+	 --DPRAM
+   inst_PORT_AB : entity work.dpram
+   generic map
+   (
+       mem_size    => h_res * v_res,
+       data_width  => 24
+   );
+  port map
+  (   
+       i_clk_a => s_clk_27,
+       i_clk_b => s_clk_27,
+
+       i_data_a => s_data_a,
+       i_data_b => (others => '0'),
+       i_addr_a => s_addr_a,
+       i_addr_b => to_integer(s_scan_y) * h_res + to_integer(s_scan_x),
+       i_we_a => s_we_a,
+       i_we_b => '0',
+       o_q_a => open,
+       o_q_b => s_pixel_data
+  );
+	 
 end architecture rtl;
