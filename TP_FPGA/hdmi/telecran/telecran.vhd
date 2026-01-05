@@ -73,11 +73,12 @@ architecture rtl of telecran is
     signal s_pos_x  : integer range 0 to h_res-1;
     signal s_pos_y  : integer range 0 to v_res-1;
 
-    signal s_pixel_data : std_logic_vector(23 downto 0);
-
-    signal s_we_a : std_logic;
-    signal s_data_a : std_logic_vector(23 downto 0);
-    signal s_addr_a : natural range 0 to h_res*v_res-1;
+	 -- On change la taille des vecteurs de données mémoire à 1 bit
+    signal s_pixel_data : std_logic_vector(0 downto 0); 
+    signal s_data_a     : std_logic_vector(0 downto 0);
+    
+    signal s_we_a       : std_logic;
+    signal s_addr_a     : natural range 0 to h_res*v_res-1;
 
 begin
     o_leds <= (others => '0');
@@ -158,60 +159,55 @@ begin
 	 -- ========================================================================
     -- AFFICHAGE (Carre Blanc sur Fond Bleu)
     -- ========================================================================
-    process(s_scan_x, s_scan_y, s_pos_x, s_pos_y, s_de)
-        variable v_scan_x_int : integer;
-        variable v_scan_y_int : integer;
+    -- AFFICHAGE
+    process(s_clk_27) -- Utilise l'horloge HDMI, c'est plus propre que la liste de sensibilité
     begin
-        v_scan_x_int := to_integer(s_scan_x);
-        v_scan_y_int := to_integer(s_scan_y);
-
-        if s_de = '1' then
-            -- Zone curseur (taille 16x16)
-            if (v_scan_x_int >= s_pos_x and v_scan_x_int < s_pos_x + 4) and
-               (v_scan_y_int >= s_pos_y and v_scan_y_int < s_pos_y + 4) then
-                o_hdmi_tx_d <= x"FFFFFF"; -- Blanc
+        if rising_edge(s_clk_27) then
+            if s_de = '1' then
+                -- Priorité au curseur (optionnel, pour voir où on est)
+                if (to_integer(s_scan_x) >= s_pos_x and to_integer(s_scan_x) < s_pos_x + 4) and
+                   (to_integer(s_scan_y) >= s_pos_y and to_integer(s_scan_y) < s_pos_y + 4) then
+                    o_hdmi_tx_d <= x"00FF00"; -- Curseur Rouge
+                
+                -- Sinon, on affiche ce qu'il y a en mémoire
+                elsif s_pixel_data(0) = '1' then
+                    o_hdmi_tx_d <= x"000000"; 
+                else
+                    o_hdmi_tx_d <= x"00FF00"; 
+                end if;
             else
-                o_hdmi_tx_d <= s_pixel_data;  
+                o_hdmi_tx_d <= (others => '0');
             end if;
-        else
-            o_hdmi_tx_d <= (others => '0');
         end if;
     end process;
 	 
     -- Processus d'écriture dans la DPRAM via le port A
     process(i_left_pb, s_pos_x, s_pos_y)
     begin
-        if i_left_pb = '0' then  -- Bouton gauche pressé (supposé actif bas)
-            s_we_a <= '1';
-            s_data_a <= x"FFFFFF";  -- Blanc
-            s_addr_a <= s_pos_y * h_res + s_pos_x;
-        else
-            s_we_a <= '0';
-            s_data_a <= (others => '0');
-            s_addr_a <= 0;
-        end if;
+         s_we_a   <= '1';
+         s_data_a <= "1"; -- Vecteur de 1 bit à '1'
+         s_addr_a <= s_pos_y * h_res + s_pos_x;
+
     end process;
 	 
-	 --DPRAM
-   inst_PORT_AB : entity work.dpram
-   generic map
-   (
-       mem_size    => h_res * v_res,
-       data_width  => 24
-   );
-  port map
-  (   
-       i_clk_a => s_clk_27,
-       i_clk_b => s_clk_27,
+	-- DPRAM Instantiation
+    inst_framebuffer : entity work.dpram
+    generic map (
+        mem_size   => h_res * v_res,
+        data_width => 1  -- CORRECTION IMPORTANTE : 1 bit de large
+    ) -- PAS DE POINT VIRGULE ICI !
+    port map (    
+        i_clk_a  => i_clk_50, -- Utilise i_clk_50 pour l'écriture (synchro avec encodeurs)
+        i_clk_b  => s_clk_27, -- Utilise s_clk_27 pour la lecture (synchro avec HDMI)
 
-       i_data_a => s_data_a,
-       i_data_b => (others => '0'),
-       i_addr_a => s_addr_a,
-       i_addr_b => to_integer(s_scan_y) * h_res + to_integer(s_scan_x),
-       i_we_a => s_we_a,
-       i_we_b => '0',
-       o_q_a => open,
-       o_q_b => s_pixel_data
-  );
+        i_data_a => s_data_a,
+        i_data_b => "0",      -- Vecteur de 1 bit
+        i_addr_a => s_addr_a,
+        i_addr_b => to_integer(s_scan_y) * h_res + to_integer(s_scan_x),
+        i_we_a   => s_we_a,
+        i_we_b   => '0',
+        o_q_a    => open,
+        o_q_b    => s_pixel_data
+    );
 	 
 end architecture rtl;
