@@ -167,6 +167,15 @@ We wrote the testbench file before the simulation on ModelSim.
 ![Edge detection Simulation](figures/edge_detector_simulation.png);
 
 
+### Déplacement d'un pixel
+
+![moving pixel](figures/pixel.gif);
+
+
+### Mémorisation
+
+Une RAM Dual-Port est une RAM avec deux accès indépendants. Un pour **l'écriture**, piloté par les compteur des encodeurs, côté utilisateur, et un autre pour la **lecture**, piloté par le contrôleur de l'HDMI.
+
 
 ### LEDs
 | Name  | GPIO  | FPGA |
