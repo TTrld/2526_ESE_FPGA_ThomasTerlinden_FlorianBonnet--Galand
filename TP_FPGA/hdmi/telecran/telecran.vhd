@@ -80,6 +80,14 @@ architecture rtl of telecran is
     signal s_we_a       : std_logic;
     signal s_addr_a     : natural range 0 to h_res*v_res-1;
 
+
+    -- ==== SIGNAUX POUR L'EFFACEMENT ====
+    -- Un booléen pour savoir si on est en mode "Gomme géante"
+    signal s_is_clearing : std_logic := '0';
+    
+    -- Un compteur pour parcourir toute la RAM
+    signal s_clear_cnt   : natural range 0 to (h_res * v_res) - 1 := 0;
+    
 begin
     o_leds <= (others => '0');
     o_de10_leds <= (others => '0');
@@ -167,7 +175,7 @@ begin
                 -- Priorité au curseur (optionnel, pour voir où on est)
                 if (to_integer(s_scan_x) >= s_pos_x and to_integer(s_scan_x) < s_pos_x + 4) and
                    (to_integer(s_scan_y) >= s_pos_y and to_integer(s_scan_y) < s_pos_y + 4) then
-                    o_hdmi_tx_d <= x"00FF00"; -- Curseur Rouge
+                    o_hdmi_tx_d <= x"000000"; -- Curseur Rouge
                 
                 -- Sinon, on affiche ce qu'il y a en mémoire
                 elsif s_pixel_data(0) = '1' then
@@ -181,13 +189,48 @@ begin
         end if;
     end process;
 	 
-    -- Processus d'écriture dans la DPRAM via le port A
-    process(i_left_pb, s_pos_x, s_pos_y)
+    -- ========================================================================
+    -- GESTION ÉCRITURE ET EFFACEMENT (Machine à états)
+    -- ========================================================================
+    process(i_clk_50, i_rst_n)
     begin
-         s_we_a   <= '1';
-         s_data_a <= "1"; -- Vecteur de 1 bit à '1'
-         s_addr_a <= s_pos_y * h_res + s_pos_x;
+        if i_rst_n = '0' then
+            s_is_clearing <= '0';
+            s_clear_cnt   <= 0;
+            s_we_a        <= '0';
+        elsif rising_edge(i_clk_50) then
+            
+            -- ÉTAT 1 : MODE EFFACEMENT
+            if s_is_clearing = '1' then
+                s_we_a   <= '1';     -- On écrit
+                s_data_a <= "0";     -- De la couleur NOIRE (0)
+                s_addr_a <= s_clear_cnt; -- A l'adresse du compteur
+                
+                -- Gestion du compteur
+                if s_clear_cnt = (h_res * v_res) - 1 then
+                    -- On a fini de tout parcourir
+                    s_is_clearing <= '0';
+                    s_clear_cnt   <= 0;
+                else
+                    -- On continue d'avancer
+                    s_clear_cnt <= s_clear_cnt + 1;
+                end if;
 
+            -- ÉTAT 2 : MODE DESSIN (Normal)
+            else
+                -- Détection appui bouton (Reset) - Supposons actif BAS ('0')
+                if i_left_pb = '0' then
+                    s_is_clearing <= '1'; -- On lance l'effacement
+                    s_clear_cnt   <= 0;
+                else
+                    -- Comportement normal : on dessine là où est le curseur
+                    s_we_a   <= '1';
+                    s_data_a <= "1"; -- BLANC
+                    s_addr_a <= s_pos_y * h_res + s_pos_x;
+                end if;
+            end if;
+            
+        end if;
     end process;
 	 
 	-- DPRAM Instantiation
@@ -195,7 +238,7 @@ begin
     generic map (
         mem_size   => h_res * v_res,
         data_width => 1  -- CORRECTION IMPORTANTE : 1 bit de large
-    ) -- PAS DE POINT VIRGULE ICI !
+    )
     port map (    
         i_clk_a  => i_clk_50, -- Utilise i_clk_50 pour l'écriture (synchro avec encodeurs)
         i_clk_b  => s_clk_27, -- Utilise s_clk_27 pour la lecture (synchro avec HDMI)
