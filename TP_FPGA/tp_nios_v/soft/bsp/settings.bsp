@@ -2,12 +2,12 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal2</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>12 janv. 2026 13:53:40</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1768222420328</BspGeneratedUnixTimeStamp>
-        <BspGeneratedLocation>C:\Users\Florian\Documents\ENSEA\3eme_annee\ESE\TP_FPGA\tp_nios_v\soft\bsp</BspGeneratedLocation>
-        <BspSettingsFile>C:\Users\Florian\Documents\ENSEA\3eme_annee\ESE\TP_FPGA\tp_nios_v\soft\bsp\settings.bsp</BspSettingsFile>
+        <BspGeneratedTimeStamp>12 janv. 2026 16:51:35</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1768233095787</BspGeneratedUnixTimeStamp>
+        <BspGeneratedLocation>C:\Users\Florian\Documents\ENSEA\3eme_annee\ESE\TP_FPGA\2526_ESE_FPGA_ThomasTerlinden_FlorianBonnet--Galand\TP_FPGA\tp_nios_v\soft\bsp</BspGeneratedLocation>
+        <BspSettingsFile>C:\Users\Florian\Documents\ENSEA\3eme_annee\ESE\TP_FPGA\2526_ESE_FPGA_ThomasTerlinden_FlorianBonnet--Galand\TP_FPGA\tp_nios_v\soft\bsp\settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\sopc\nios.sopcinfo</SopcDesignFile>
-        <SystemFileHash>41a6de79bac068ee5b64cdd9a75fd50c67fdbb1166f862a455a119cdb283c7</SystemFileHash>
+        <SystemFileHash>93a05dd7acbe5beb30ddd1d4e181583fd49bc0c220cac6a6c17a9f6a337b</SystemFileHash>
         <JdiFile>default</JdiFile>
         <Cpu>intel_niosv_m_0</Cpu>
         <SchemaVersion>1.9</SchemaVersion>
@@ -628,6 +628,12 @@
                 <addressRange>0x00030050 - 0x00030057</addressRange>
                 <addressSpan>8</addressSpan>
                 <attributes>printable</attributes>
+        </MemoryMap>
+        <MemoryMap>
+                <slaveDescriptor>i2c_0</slaveDescriptor>
+                <addressRange>0x00030080 - 0x000300BF</addressRange>
+                <addressSpan>64</addressSpan>
+                <attributes/>
         </MemoryMap>
         <LinkerSection>
                 <sectionName>.text</sectionName>

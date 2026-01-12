@@ -6,7 +6,7 @@ JedecChain;
 	P ActionCode(Ign)
 		Device PartName(SOCVHPS) MfrSpec(OpMask(0));
 	P ActionCode(Cfg)
-		Device PartName(5CSEBA6U23) Path("C:/Users/Florian/Documents/ENSEA/3eme_annee/ESE/TP_FPGA/tp_nios_v/synt/output_files/") File("tp_nios_v.sof") MfrSpec(OpMask(1));
+		Device PartName(5CSEBA6U23) Path("C:/Users/Florian/Documents/ENSEA/3eme_annee/ESE/TP_FPGA/2526_ESE_FPGA_ThomasTerlinden_FlorianBonnet--Galand/TP_FPGA/tp_nios_v/synt/output_files/") File("tp_nios_v.sof") MfrSpec(OpMask(1));
 
 ChainEnd;
 

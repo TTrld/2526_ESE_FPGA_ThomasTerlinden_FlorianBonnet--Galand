@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <unistd.h>
+#include "system.h"
+#include "altera_avalon_pio_regs.h"
+#include "altera_avalon_i2c.h"
+
+// --- Adresses et Registres de l'ADXL345 ---
+// L'adresse I2C par défaut est souvent 0x53. 
+// Si cela ne marche pas, essayez 0x1D (dépend de la broche ALT_ADDRESS sur la carte).
+#define ADXL345_I2C_ADDR    0x53 
+
+#define REG_DEVID           0x00
+#define REG_POWER_CTL       0x2D
+#define REG_DATA_FORMAT     0x31
+#define REG_DATAX0          0x32 // Données Axe X (LSB)
+#define REG_DATAX1          0x33 // Données Axe X (MSB)
+
+// --- Configuration ---
+ALT_AVALON_I2C_DEV_t *i2c_dev; // Pointeur vers le périphérique I2C
+
+// Fonction pour écrire un octet dans un registre
+void adxl_write(uint8_t reg, uint8_t value) {
+    uint8_t tx_buffer[2];
+    tx_buffer[0] = reg;
+    tx_buffer[1] = value;
+    
+    // Envoi de l'adresse du registre + la valeur
+    alt_avalon_i2c_master_tx(i2c_dev, tx_buffer, 2, ALT_AVALON_I2C_NO_INTERRUPTS);
+}
+
+// Fonction pour lire les données de l'axe X (2 octets)
+int16_t adxl_read_x() {
+    uint8_t tx_buffer[1];
+    uint8_t rx_buffer[2];
+    
+    tx_buffer[0] = REG_DATAX0; // On demande à lire à partir du registre X0
+    
+    // 1. Écriture de l'adresse du registre (sans envoyer de STOP si possible, mais ici on fait simple)
+    alt_avalon_i2c_master_tx(i2c_dev, tx_buffer, 1, ALT_AVALON_I2C_NO_INTERRUPTS);
+    
+    // 2. Lecture des 2 octets (LSB puis MSB)
+    alt_avalon_i2c_master_rx(i2c_dev, rx_buffer, 2, ALT_AVALON_I2C_NO_INTERRUPTS);
+    
+    // Reconstitution du mot de 16 bits signé
+    // (MSB << 8) | LSB
+    int16_t x_acc = (int16_t)((rx_buffer[1] << 8) | rx_buffer[0]);
+    return x_acc;
+}
+
+int main(void) {
+    printf("Demarrage du Niveau a Bulles...\n");
+
+    // 1. Ouverture du driver I2C (Le nom "I2C_0_NAME" vient de system.h)
+    i2c_dev = alt_avalon_i2c_open(I2C_0_NAME);
+    if (!i2c_dev) {
+        printf("Erreur: Impossible d'ouvrir l'I2C.\n");
+        return -1;
+    }
+
+    // 2. Configuration de l'ADXL345
+    // Réglage du format de données (optionnel, par défaut +/- 2g c'est bien)
+    // adxl_write(REG_DATA_FORMAT, 0x00); 
+    
+    // IMPORTANT : Sortir du mode veille (Bit Measure à 1 dans POWER_CTL)
+    adxl_write(REG_POWER_CTL, 0x08);
+
+    int16_t x_val;
+    uint16_t led_pattern;
+    int led_index;
+
+    while (1) {
+        // Lecture de l'accélération
+        x_val = adxl_read_x();
+        
+        // Affichage console pour debug (utile pour calibrer)
+        // printf("X: %d\n", x_val);
+
+        // --- Logique du niveau à bulles ---
+        // L'ADXL345 en +/- 2g sur 10 bits donne environ 256 pour 1g.
+        // On veut mapper x_val (de -256 à +256 environ) sur les 10 LEDs (index 0 à 9).
+        // Centre ~ 0 -> LED 4 ou 5.
+        
+        // Formule simple : On divise par une sensibilité pour réduire l'échelle
+        // Plus le diviseur est petit, plus le niveau est sensible.
+        // On ajoute 5 pour centrer sur la barre de leds.
+        led_index = 5 + (x_val / 32); 
+
+        // Saturation (pour ne pas dépasser les leds disponibles)
+        if (led_index < 0) led_index = 0;
+        if (led_index > 9) led_index = 9;
+
+        // Création du pattern LED (1 décalé de l'index)
+        led_pattern = (1 << led_index);
+
+        // Écriture sur les LEDs
+        IOWR_ALTERA_AVALON_PIO_DATA(PIO_0_BASE, led_pattern);
+
+        // Petit délai pour la fluidité (trop lent = saccadé, trop vite = illisible)
+        usleep(50000); // 50ms
+    }
+
+    return 0;
+}
