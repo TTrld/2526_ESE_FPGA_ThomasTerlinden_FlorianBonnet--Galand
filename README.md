@@ -178,6 +178,14 @@ Une RAM Dual-Port est une RAM avec deux accès indépendants. Un pour **l'écrit
 
 ![lines&reset](figures/pixel_bouton.gif);
 
+
+### Programmation en C
+On programme ensuite la carte en C, pour faire clignoter une LED dans un premier temps (le printf n'est pas fonctionnel).
+![blink_en_C](figures/led_blink_c.gif);
+
+En fait ensuite un chenillard.
+![chenillard_en_c](figures/chenillard.gif);
+
 ### LEDs
 | Name  | GPIO  | FPGA |
 | :--- |:-----:| ----:|
